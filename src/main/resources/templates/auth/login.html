@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Iniciar Sesión | Sistema Seguro</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+</head>
+<body class="auth-page">
+
+<div class="auth-container">
+    <div class="auth-card">
+
+        <!-- Logo / Encabezado -->
+        <div class="auth-header">
+            <div class="auth-icon">🔐</div>
+            <h1 class="auth-title">Iniciar Sesión</h1>
+            <p class="auth-subtitle">Sistema de Seguridad Web — UDES 2026</p>
+        </div>
+
+        <!-- Alertas -->
+        <div th:if="${param.error}" class="alert alert-error">
+            ⚠️ Correo o contraseña incorrectos. Intente de nuevo.
+        </div>
+        <div th:if="${param.logout}" class="alert alert-success">
+            ✅ Sesión cerrada correctamente.
+        </div>
+        <div th:if="${param.registrado}" class="alert alert-success">
+            ✅ Registro exitoso. Puede iniciar sesión ahora.
+        </div>
+
+        <!--
+            Spring Security intercepta el POST a /login automáticamente.
+            El campo "username" debe llamarse exactamente "username" y "password".
+            Thymeleaf incluye el token CSRF de forma automática con th:action.
+        -->
+        <form th:action="@{/login}" method="post" class="auth-form">
+
+            <div class="form-group">
+                <label for="username" class="form-label">Correo Electrónico</label>
+                <input type="email"
+                       id="username"
+                       name="username"
+                       class="form-control"
+                       placeholder="correo@ejemplo.com"
+                       required
+                       autocomplete="email"/>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password"
+                       id="password"
+                       name="password"
+                       class="form-control"
+                       placeholder="••••••••"
+                       required
+                       autocomplete="current-password"/>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">
+                Ingresar al Sistema
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>¿No tiene cuenta? <a th:href="@{/registro}" class="auth-link">Registrarse aquí</a></p>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

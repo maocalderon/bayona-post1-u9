@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Dashboard | Sistema Seguro</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+</head>
+<body class="app-page">
+
+<!-- Barra de navegación -->
+<nav class="navbar">
+    <div class="navbar-brand">🛡️ Sistema Seguro</div>
+    <div class="navbar-user">
+        <span class="navbar-greeting">
+            Hola, <strong sec:authentication="name">usuario</strong>
+        </span>
+        <!-- Logout: POST requerido por Spring Security (protección CSRF) -->
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-outline btn-sm">Cerrar Sesión</button>
+        </form>
+    </div>
+</nav>
+
+<!-- Contenido principal -->
+<main class="main-content">
+
+    <div class="page-header">
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Bienvenido al sistema de autenticación segura</p>
+    </div>
+
+    <!-- Tarjeta de información del usuario -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">📋 Información de Sesión</h2>
+        </div>
+        <div class="card-body">
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Usuario:</span>
+                    <span class="info-value" th:text="${usuario}">email@ejemplo.com</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Roles:</span>
+                    <span class="info-value">
+                        <span th:each="rol : ${roles}" class="badge badge-primary"
+                              th:text="${rol.authority}">ROLE_USER</span>
+                    </span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Estado:</span>
+                    <span class="badge badge-success">✅ Autenticado</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección exclusiva para ADMIN -->
+    <div class="card" sec:authorize="hasRole('ADMIN')">
+        <div class="card-header card-header-admin">
+            <h2 class="card-title">⚙️ Acceso Administrativo</h2>
+        </div>
+        <div class="card-body">
+            <p>Tiene privilegios de administrador. Puede gestionar todos los usuarios del sistema.</p>
+            <a th:href="@{/admin}" class="btn btn-danger">
+                🔧 Ir al Panel de Administración
+            </a>
+        </div>
+    </div>
+
+    <!-- Sección exclusiva para USER -->
+    <div class="card" sec:authorize="hasRole('USER')">
+        <div class="card-header card-header-user">
+            <h2 class="card-title">👤 Área de Usuario</h2>
+        </div>
+        <div class="card-body">
+            <p>Tiene acceso de usuario estándar. Sus datos están protegidos con BCrypt.</p>
+            <div class="feature-list">
+                <div class="feature-item">✅ Contraseña hasheada con BCrypt (factor 12)</div>
+                <div class="feature-item">✅ Sesión protegida con token CSRF</div>
+                <div class="feature-item">✅ Rutas protegidas por rol</div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+</body>
+</html>

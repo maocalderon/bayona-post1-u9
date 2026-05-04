@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Panel Admin | Sistema Seguro</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+</head>
+<body class="app-page">
+
+<!-- Barra de navegación -->
+<nav class="navbar navbar-admin">
+    <div class="navbar-brand">🛡️ Sistema Seguro — <span class="badge badge-admin">ADMIN</span></div>
+    <div class="navbar-user">
+        <span class="navbar-greeting">
+            Admin: <strong sec:authentication="name">admin</strong>
+        </span>
+        <a th:href="@{/dashboard}" class="btn btn-outline btn-sm" style="margin-right:8px;">Dashboard</a>
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-outline btn-sm">Cerrar Sesión</button>
+        </form>
+    </div>
+</nav>
+
+<main class="main-content">
+
+    <div class="page-header">
+        <h1 class="page-title">⚙️ Panel de Administración</h1>
+        <p class="page-subtitle">Gestión de usuarios del sistema — Solo accesible con rol ADMIN</p>
+    </div>
+
+    <!-- Estadísticas rápidas -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number" th:text="${usuarios.size()}">0</div>
+            <div class="stat-label">Total Usuarios</div>
+        </div>
+        <div class="stat-card stat-card-success">
+            <div class="stat-number"
+                 th:text="${#lists.size(usuarios.?[activo == true])}">0</div>
+            <div class="stat-label">Activos</div>
+        </div>
+        <div class="stat-card stat-card-danger">
+            <div class="stat-number"
+                 th:text="${#lists.size(usuarios.?[activo == false])}">0</div>
+            <div class="stat-label">Inactivos</div>
+        </div>
+    </div>
+
+    <!-- Tabla de usuarios -->
+    <div class="card">
+        <div class="card-header card-header-admin">
+            <h2 class="card-title">📋 Lista de Usuarios Registrados</h2>
+        </div>
+        <div class="card-body" style="padding:0;">
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Correo</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="u : ${usuarios}"
+                            th:classappend="${!u.activo} ? 'row-inactive'">
+                            <td th:text="${u.id}">1</td>
+                            <td th:text="${u.nombre}">Nombre</td>
+                            <td th:text="${u.email}">email@ejemplo.com</td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${u.rol == 'ROLE_ADMIN'} ? 'badge-admin' : 'badge-primary'"
+                                      th:text="${u.rol}">ROLE_USER</span>
+                            </td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${u.activo} ? 'badge-success' : 'badge-danger'"
+                                      th:text="${u.activo} ? 'Activo' : 'Inactivo'">Activo</span>
+                            </td>
+                            <td>
+                                <form th:action="@{/admin/toggle/{id}(id=${u.id})}" method="post">
+                                    <button type="submit"
+                                            class="btn btn-sm"
+                                            th:classappend="${u.activo} ? 'btn-warning' : 'btn-success'"
+                                            th:text="${u.activo} ? 'Desactivar' : 'Activar'">Toggle</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <!-- Mensaje si no hay usuarios -->
+                        <tr th:if="${#lists.isEmpty(usuarios)}">
+                            <td colspan="6" class="text-center">No hay usuarios registrados.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+</body>
+</html>

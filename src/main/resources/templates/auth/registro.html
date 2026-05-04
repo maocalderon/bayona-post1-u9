@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Registro | Sistema Seguro</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+</head>
+<body class="auth-page">
+
+<div class="auth-container">
+    <div class="auth-card">
+
+        <div class="auth-header">
+            <div class="auth-icon">👤</div>
+            <h1 class="auth-title">Crear Cuenta</h1>
+            <p class="auth-subtitle">Complete el formulario para registrarse</p>
+        </div>
+
+        <!--
+            th:object vincula el objeto "usuario" del modelo con el formulario.
+            th:field genera automáticamente id, name y value para cada campo.
+            Los errores de validación (@Valid + BindingResult) se muestran con th:errors.
+        -->
+        <form th:action="@{/registro}" th:object="${usuario}" method="post" class="auth-form">
+
+            <!-- Nombre -->
+            <div class="form-group">
+                <label for="nombre" class="form-label">Nombre Completo</label>
+                <input type="text"
+                       th:field="*{nombre}"
+                       id="nombre"
+                       class="form-control"
+                       th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'"
+                       placeholder="Juan Pérez"
+                       required/>
+                <div th:if="${#fields.hasErrors('nombre')}" class="field-error">
+                    <span th:errors="*{nombre}">Error nombre</span>
+                </div>
+            </div>
+
+            <!-- Correo -->
+            <div class="form-group">
+                <label for="email" class="form-label">Correo Electrónico</label>
+                <input type="email"
+                       th:field="*{email}"
+                       id="email"
+                       class="form-control"
+                       th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                       placeholder="correo@ejemplo.com"
+                       required/>
+                <div th:if="${#fields.hasErrors('email')}" class="field-error">
+                    <span th:errors="*{email}">Error email</span>
+                </div>
+            </div>
+
+            <!-- Contraseña -->
+            <div class="form-group">
+                <label for="contrasenia" class="form-label">Contraseña</label>
+                <input type="password"
+                       th:field="*{contrasenia}"
+                       id="contrasenia"
+                       class="form-control"
+                       th:classappend="${#fields.hasErrors('contrasenia')} ? 'is-invalid'"
+                       placeholder="Mínimo 6 caracteres"
+                       required/>
+                <div th:if="${#fields.hasErrors('contrasenia')}" class="field-error">
+                    <span th:errors="*{contrasenia}">Error contraseña</span>
+                </div>
+                <small class="form-hint">🔒 Su contraseña se almacena de forma segura con BCrypt.</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">
+                Crear Cuenta
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>¿Ya tiene cuenta? <a th:href="@{/login}" class="auth-link">Iniciar Sesión</a></p>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
